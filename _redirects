@@ -1,0 +1,4 @@
+/api/sexta          https://docs.google.com/spreadsheets/d/1UoBNgJpBPbsdIC6odSqkKSFAQp24TSpXNycCHaaj-g8/gviz/tq?tqx=out:csv&sheet=Sexta  200
+/api/sabado         https://docs.google.com/spreadsheets/d/1UoBNgJpBPbsdIC6odSqkKSFAQp24TSpXNycCHaaj-g8/gviz/tq?tqx=out:csv&sheet=S%C3%A1bado  200
+/api/domingo        https://docs.google.com/spreadsheets/d/1UoBNgJpBPbsdIC6odSqkKSFAQp24TSpXNycCHaaj-g8/gviz/tq?tqx=out:csv&sheet=Domingo  200
+/api/palestrantes   https://docs.google.com/spreadsheets/d/1UoBNgJpBPbsdIC6odSqkKSFAQp24TSpXNycCHaaj-g8/gviz/tq?tqx=out:csv&sheet=Palestrantes  200

@@ -1,0 +1,27 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/api/sexta"
+  to = "https://docs.google.com/spreadsheets/d/1UoBNgJpBPbsdIC6odSqkKSFAQp24TSpXNycCHaaj-g8/gviz/tq?tqx=out:csv&sheet=Sexta"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/sabado"
+  to = "https://docs.google.com/spreadsheets/d/1UoBNgJpBPbsdIC6odSqkKSFAQp24TSpXNycCHaaj-g8/gviz/tq?tqx=out:csv&sheet=S%C3%A1bado"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/domingo"
+  to = "https://docs.google.com/spreadsheets/d/1UoBNgJpBPbsdIC6odSqkKSFAQp24TSpXNycCHaaj-g8/gviz/tq?tqx=out:csv&sheet=Domingo"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/palestrantes"
+  to = "https://docs.google.com/spreadsheets/d/1UoBNgJpBPbsdIC6odSqkKSFAQp24TSpXNycCHaaj-g8/gviz/tq?tqx=out:csv&sheet=Palestrantes"
+  status = 200
+  force = true
+
