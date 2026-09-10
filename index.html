@@ -210,6 +210,9 @@ function parseGrade(txt,diaFixo){
       continue;
     }
     var ini=mins(c0);
+    // aba em formato Tabela pode não entregar a linha de cabeçalho.
+    // se a linha tem hora na 1ª coluna, assume a ordem padrão da planilha.
+    if(ini!==null&&!map)map={i:0,f:1,a:3,r:4,c:6,l:-1,s:-1,o:5};
     if(ini===null||!map)continue;
     var ato=(x[map.a]||'').trim();
     if(!ato)continue;
