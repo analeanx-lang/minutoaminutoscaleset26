@@ -348,10 +348,22 @@ function render(){
 
 var SHEET='1UoBNgJpBPbsdIC6odSqkKSFAQp24TSpXNycCHaaj-g8';
 function gviz(aba){return 'https://docs.google.com/spreadsheets/d/'+SHEET+'/gviz/tq?tqx=out:csv&sheet='+encodeURIComponent(aba);}
+var DIAG=[];
 function get(u){
-  return fetch(u+(u.indexOf('?')>0?'&':'?')+'t='+Date.now())
-    .then(function(r){if(!r.ok)throw 0;return r.text();})
-    .then(function(x){if(/^\s*</.test(x)||/google\.visualization/.test(x))throw 1;return x;});
+  var alvo=u+(u.indexOf('?')>0?'&':'?')+'t='+Date.now();
+  var reg={u:u,st:'?',n:0,ini:''};DIAG.push(reg);
+  return fetch(alvo)
+    .then(function(r){reg.st=r.status;if(!r.ok)throw 0;return r.text();})
+    .then(function(x){
+      reg.n=x.length;reg.ini=x.slice(0,50).replace(/\n/g,' ');
+      if(/^\s*</.test(x)){reg.st=reg.st+' HTML';throw 1;}
+      if(/google\.visualization/.test(x)){reg.st=reg.st+' JSON';throw 1;}
+      return x;})
+    .catch(function(e){if(reg.st==='?')reg.st='bloqueado';throw e;});
+}
+function verDiag(){
+  var t=DIAG.map(function(d){return d.u+' → '+d.st+' · '+d.n+' car · '+esc(d.ini);}).join('<br>');
+  document.getElementById('msg').innerHTML='<div class="hint" style="font-family:ui-monospace,monospace;font-size:10px;line-height:1.7">'+t+'</div>';
 }
 function tentar(rota,nomes,i){
   i=i||0;
@@ -379,6 +391,7 @@ async function buscarTudo(){
 }
 
 function atualizar(){
+  DIAG=[];
   document.getElementById('stt').textContent='Buscando…';
   buscarTudo().then(function(r){
      var g1=r[0]?parseGrade(r[0],'Sexta'):null,
@@ -398,6 +411,7 @@ function atualizar(){
        :ok===0?'Sem acesso à planilha · usando cópia embutida'
        :('Faltou a aba '+faltando.join(', ')+' — '+hora);
      document.getElementById('stt').style.color=faltando.length?'var(--danger)':'';
+     if(faltando.length)verDiag();
 
      render();
   });
