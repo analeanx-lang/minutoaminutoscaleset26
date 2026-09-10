@@ -359,13 +359,28 @@ function tentar(rota,nomes,i){
   if(i>nomes.length)return Promise.resolve(null);
   return get(gviz(nomes[i-1])).catch(function(){return tentar(rota,nomes,i+1);});
 }
+function espera(ms){return new Promise(function(r){setTimeout(r,ms);});}
+
+// busca uma aba de cada vez, com uma segunda tentativa se falhar.
+// pedir as quatro juntas fazia o Google recusar parte delas.
+async function buscarTudo(){
+  var alvos=[['/api/sexta',['Sexta','sexta','Dia 1']],
+             ['/api/sabado',['Sábado','Sabado','sábado','Dia 2']],
+             ['/api/domingo',['Domingo','domingo','Dia 3']],
+             ['/api/palestrantes',['Palestrantes','palestrantes','PALESTRANTES','Bio']]];
+  var r=[];
+  for(var k=0;k<alvos.length;k++){
+    var t=await tentar(alvos[k][0],alvos[k][1]);
+    if(!t){ await espera(600); t=await tentar(alvos[k][0],alvos[k][1]); }
+    r.push(t);
+    if(k<alvos.length-1) await espera(300);
+  }
+  return r;
+}
+
 function atualizar(){
   document.getElementById('stt').textContent='Buscando…';
-  Promise.all([tentar('/api/sexta',['Sexta','sexta','Dia 1']),
-               tentar('/api/sabado',['Sábado','Sabado','sábado','Dia 2']),
-               tentar('/api/domingo',['Domingo','domingo','Dia 3']),
-               tentar('/api/palestrantes',['Palestrantes','palestrantes','PALESTRANTES','Bio'])])
-   .then(function(r){
+  buscarTudo().then(function(r){
      var g1=r[0]?parseGrade(r[0],'Sexta'):null,
          g2=r[1]?parseGrade(r[1],'Sábado'):null,
          g3=r[2]?parseGrade(r[2],'Domingo'):null;
@@ -377,15 +392,15 @@ function atualizar(){
      if(!g1)faltando.push('Sexta');
      if(!g2)faltando.push('Sábado');
      if(!g3)faltando.push('Domingo');
+     if(!r[3])faltando.push('Palestrantes');
      var d=new Date(),hora=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' às '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-     document.getElementById('stt').textContent=(ok===2&&!faltando.length)?('Atualizado '+hora)
+     document.getElementById('stt').textContent=!faltando.length?('Atualizado '+hora)
        :ok===0?'Sem acesso à planilha · usando cópia embutida'
-       :(faltando.length?('Faltou a aba '+faltando.join(', ')+' — '+hora)
-                       :('Grade atualizada · palestrantes '+(txtP?'em formato inesperado':'não encontrada')+' — '+hora));
-     document.getElementById('stt').style.color=(ok===2&&!faltando.length)?'':'var(--danger)';
+       :('Faltou a aba '+faltando.join(', ')+' — '+hora);
+     document.getElementById('stt').style.color=faltando.length?'var(--danger)':'';
 
      render();
-   });
+  });
 }
 
 // rebusca a planilha sozinho a cada 3 minutos
